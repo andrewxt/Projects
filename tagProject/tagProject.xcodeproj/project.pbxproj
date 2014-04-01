@@ -31,7 +31,7 @@
 		A88098C518E0FD90007FEBF5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A88098C418E0FD90007FEBF5 /* Security.framework */; };
 		A88098C718E0FD9B007FEBF5 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A88098C618E0FD9B007FEBF5 /* StoreKit.framework */; };
 		A88098C918E0FDA9007FEBF5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A88098C818E0FDA9007FEBF5 /* SystemConfiguration.framework */; };
-		A88098CB18E1307F007FEBF5 /* mzl.eyekjyzr.75x75-65.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A88098CA18E1307F007FEBF5 /* mzl.eyekjyzr.75x75-65.jpg */; };
+		A8B8A84518EA5BF6003D2398 /* taggirl.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A8B8A84418EA5BF6003D2398 /* taggirl.tiff */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,7 +75,7 @@
 		A88098C418E0FD90007FEBF5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A88098C618E0FD9B007FEBF5 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A88098C818E0FDA9007FEBF5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		A88098CA18E1307F007FEBF5 /* mzl.eyekjyzr.75x75-65.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "mzl.eyekjyzr.75x75-65.jpg"; path = "../../../../Downloads/mzl.eyekjyzr.75x75-65.jpg"; sourceTree = "<group>"; };
+		A8B8A84418EA5BF6003D2398 /* taggirl.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = taggirl.tiff; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,7 +170,7 @@
 		A880988718E0FBCA007FEBF5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A88098CA18E1307F007FEBF5 /* mzl.eyekjyzr.75x75-65.jpg */,
+				A8B8A84418EA5BF6003D2398 /* taggirl.tiff */,
 				A880988818E0FBCA007FEBF5 /* tagProject-Info.plist */,
 				A880988918E0FBCA007FEBF5 /* InfoPlist.strings */,
 				A880988C18E0FBCA007FEBF5 /* main.m */,
@@ -274,8 +274,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A88098CB18E1307F007FEBF5 /* mzl.eyekjyzr.75x75-65.jpg in Resources */,
 				A880989918E0FBCA007FEBF5 /* Images.xcassets in Resources */,
+				A8B8A84518EA5BF6003D2398 /* taggirl.tiff in Resources */,
 				A880988B18E0FBCA007FEBF5 /* InfoPlist.strings in Resources */,
 				A880989418E0FBCA007FEBF5 /* Main.storyboard in Resources */,
 			);
@@ -511,6 +511,7 @@
 				A88098B118E0FBCA007FEBF5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A88098B218E0FBCA007FEBF5 /* Build configuration list for PBXNativeTarget "tagProjectTests" */ = {
 			isa = XCConfigurationList;
@@ -519,6 +520,7 @@
 				A88098B418E0FBCA007FEBF5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

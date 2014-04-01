@@ -12,70 +12,264 @@
 
 @interface ACViewController ()
 
+@property (strong, nonatomic) NSArray *timeFrame;
+
 @end
 
 @implementation ACViewController
-
-#pragma mark - UIPickerView DataSource
-// returns the number of 'columns' to display.
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-{
-    return 1;
-}
-
-// returns the # of rows in each component..
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-{
-    return [_dateArray count];
-}
-
-#pragma mark - UIPickerView Delegate
-- (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
-{
-    return 30.0;
-}
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
-{
-    return [_dateArray objectAtIndex:row];
-}
-
-//If the user chooses from the pickerview, it calls this function;
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-{
-    //Let's print in the console what the user had chosen;
-//    if (_dateArray objectAtIndex:0) {
-//        PFQuery *userCountQuery = [PFUser query];
-//        [userCountQuery countObjectsInBackgroundWithBlock:^(int userCount, NSError *error) {
-//            if (!error) {
-//                // The count request succeeded. Log the count
-//                //     NSLog(@"There are %d users", userCount);
-//            } else {
-//                // The request failed
-//            }
-//            NSString *actualNumberOfUsers = [[NSString alloc]initWithFormat:@"%i", userCount ];
-//            self.numberOfUsers.text = actualNumberOfUsers;
-//        }];
-//
-//    }
-}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    self.datePicker.delegate = self;
-    self.datePicker.dataSource = self;
+    NSArray *data = [[NSArray alloc] initWithObjects:@"Past 24 Hours", @"Past Week", @"Past Month", @"All Time", nil];
     
-    _dateArray = [[NSArray alloc]initWithObjects:@"Past 24 Hours", @"Past Week", @"Past Month", nil];
+    self.timeFrame = data;
     
-    //Number of Users
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *todayComponents = [NSDateComponents new];
+    todayComponents.year = 2014;
+    todayComponents.month = 2;
+    todayComponents.day = 16;
+    todayComponents.hour = 4;
+    todayComponents.minute = 59;
+    todayComponents.second = 50;
+    
+    NSDate *today = [calendar dateFromComponents:todayComponents];
+    
+    NSDateComponents *offset = [NSDateComponents new];
+    offset.day = -1;
+    NSDate *yesterday = [calendar dateByAddingComponents:offset toDate:today options:0];
+    
+    PFQuery *yesterdayUserCountQuery = [PFUser query];
+    [yesterdayUserCountQuery whereKey:@"createdAt" greaterThanOrEqualTo:yesterday];
+    [yesterdayUserCountQuery countObjectsInBackgroundWithBlock:^(int userCount, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+        } else {
+            // The request failed
+        }
+        NSString *yesterdayNumberOfUsers = [[NSString alloc]initWithFormat:@"%d", userCount ];
+        self.numberOfUsers.text = yesterdayNumberOfUsers;
+    }];
+    
+    PFQuery *yesterdaySentQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
+    [yesterdaySentQuery whereKey:@"createdAt" greaterThanOrEqualTo:yesterday];
+    [yesterdaySentQuery countObjectsInBackgroundWithBlock:^(int tagCount, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+        } else {
+            // The request failed
+        }
+        NSString *yesterdayTagsSent = [[NSString alloc]initWithFormat:@"%i", tagCount];
+        self.numberOfTagsSent.text = yesterdayTagsSent;
+    }];
+    
+    PFQuery *yesterdayReceivingUserQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
+    [yesterdayReceivingUserQuery whereKey:@"createdAt" greaterThanOrEqualTo:yesterday];
+    yesterdayReceivingUserQuery.limit = 1000;
+    [yesterdayReceivingUserQuery findObjectsInBackgroundWithBlock:^(NSArray *receivingUsers, NSError *error) {
+        NSNumber *receivingUsersAmount = [NSNumber numberWithInt:0];
+        for (PFObject *obj in receivingUsers) {
+            receivingUsersAmount = [NSNumber numberWithInt:[receivingUsersAmount intValue] + [(NSArray *)[obj objectForKey:@"receivingUsers"] count]];
+        }
+        NSString *yesterdayTagsReceived = [[NSString alloc]initWithFormat:@"%@", receivingUsersAmount];
+        self.numberOfTagsRecieved.text = yesterdayTagsReceived;
+        
+    }];
+    
+}
+
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)showResultsFromYesterday:(id)sender {
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *todayComponents = [NSDateComponents new];
+    todayComponents.year = 2014;
+    todayComponents.month = 2;
+    todayComponents.day = 16;
+    todayComponents.hour = 4;
+    todayComponents.minute = 59;
+    todayComponents.second = 50;
+    
+    NSDate *today = [calendar dateFromComponents:todayComponents];
+    
+    NSDateComponents *offset = [NSDateComponents new];
+    offset.day = -1;
+    NSDate *yesterday = [calendar dateByAddingComponents:offset toDate:today options:0];
+    
+    PFQuery *yesterdayUserCountQuery = [PFUser query];
+    [yesterdayUserCountQuery whereKey:@"createdAt" greaterThanOrEqualTo:yesterday];
+    [yesterdayUserCountQuery countObjectsInBackgroundWithBlock:^(int userCount, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+        } else {
+            // The request failed
+        }
+        NSString *yesterdayNumberOfUsers = [[NSString alloc]initWithFormat:@"%d", userCount ];
+        self.numberOfUsers.text = yesterdayNumberOfUsers;
+    }];
+    
+    PFQuery *yesterdaySentQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
+    [yesterdaySentQuery whereKey:@"createdAt" greaterThanOrEqualTo:yesterday];
+    [yesterdaySentQuery countObjectsInBackgroundWithBlock:^(int tagCount, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+        } else {
+            // The request failed
+        }
+        NSString *yesterdayTagsSent = [[NSString alloc]initWithFormat:@"%i", tagCount];
+        self.numberOfTagsSent.text = yesterdayTagsSent;
+    }];
+    
+    PFQuery *yesterdayReceivingUserQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
+    [yesterdayReceivingUserQuery whereKey:@"createdAt" greaterThanOrEqualTo:yesterday];
+    yesterdayReceivingUserQuery.limit = 1000;
+    [yesterdayReceivingUserQuery findObjectsInBackgroundWithBlock:^(NSArray *receivingUsers, NSError *error) {
+        NSNumber *receivingUsersAmount = [NSNumber numberWithInt:0];
+        for (PFObject *obj in receivingUsers) {
+            receivingUsersAmount = [NSNumber numberWithInt:[receivingUsersAmount intValue] + [(NSArray *)[obj objectForKey:@"receivingUsers"] count]];
+        }
+        NSString *yesterdayTagsReceived = [[NSString alloc]initWithFormat:@"%@", receivingUsersAmount];
+        self.numberOfTagsRecieved.text = yesterdayTagsReceived;
+        
+    }];
+
+}
+
+- (IBAction)showResultsFromLastWeek:(id)sender {
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *todayComponents = [NSDateComponents new];
+    todayComponents.year = 2014;
+    todayComponents.month = 2;
+    todayComponents.day = 16;
+    todayComponents.hour = 4;
+    todayComponents.minute = 59;
+    todayComponents.second = 50;
+    
+    NSDate *today = [calendar dateFromComponents:todayComponents];
+    
+    NSDateComponents *offset = [NSDateComponents new];
+    offset.day = -7;
+    NSDate *lastWeek = [calendar dateByAddingComponents:offset toDate:today options:0];
+    
+    PFQuery *lastWeekUserCountQuery = [PFUser query];
+    [lastWeekUserCountQuery whereKey:@"createdAt" greaterThanOrEqualTo:lastWeek];
+    [lastWeekUserCountQuery countObjectsInBackgroundWithBlock:^(int userCount, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+        } else {
+            // The request failed
+        }
+        NSString *lastWeekNumberOfUsers = [[NSString alloc]initWithFormat:@"%d", userCount ];
+        self.numberOfUsers.text = lastWeekNumberOfUsers;
+    }];
+    
+    PFQuery *lastWeekSentQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
+    [lastWeekSentQuery whereKey:@"createdAt" greaterThanOrEqualTo:lastWeek];
+    [lastWeekSentQuery countObjectsInBackgroundWithBlock:^(int tagCount, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+        } else {
+            // The request failed
+        }
+        NSString *lastWeekTagsSent = [[NSString alloc]initWithFormat:@"%i", tagCount];
+        self.numberOfTagsSent.text = lastWeekTagsSent;
+    }];
+    
+    PFQuery *lastWeekReceivingUserQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
+    [lastWeekReceivingUserQuery whereKey:@"createdAt" greaterThanOrEqualTo:lastWeek];
+    lastWeekReceivingUserQuery.limit = 1000;
+    [lastWeekReceivingUserQuery findObjectsInBackgroundWithBlock:^(NSArray *receivingUsers, NSError *error) {
+        NSNumber *receivingUsersAmount = [NSNumber numberWithInt:0];
+        for (PFObject *obj in receivingUsers) {
+            receivingUsersAmount = [NSNumber numberWithInt:[receivingUsersAmount intValue] + [(NSArray *)[obj objectForKey:@"receivingUsers"] count]];
+        }
+        NSString *lastWeekTagsReceived = [[NSString alloc]initWithFormat:@"%@", receivingUsersAmount];
+        self.numberOfTagsRecieved.text = lastWeekTagsReceived;
+        
+    }];
+    
+    
+}
+
+- (IBAction)showResultsFromLastMonth:(id)sender {
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *todayComponents = [NSDateComponents new];
+    todayComponents.year = 2014;
+    todayComponents.month = 2;
+    todayComponents.day = 16;
+    todayComponents.hour = 4;
+    todayComponents.minute = 59;
+    todayComponents.second = 50;
+    
+    NSDate *today = [calendar dateFromComponents:todayComponents];
+    
+    NSDateComponents *offset = [NSDateComponents new];
+    offset.day = -30;
+    NSDate *lastMonth = [calendar dateByAddingComponents:offset toDate:today options:0];
+    
+    PFQuery *lastMonthUserCountQuery = [PFUser query];
+    [lastMonthUserCountQuery whereKey:@"createdAt" greaterThanOrEqualTo:lastMonth];
+    [lastMonthUserCountQuery countObjectsInBackgroundWithBlock:^(int userCount, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+        } else {
+            // The request failed
+        }
+        NSString *lastMonthNumberOfUsers = [[NSString alloc]initWithFormat:@"%d", userCount ];
+        self.numberOfUsers.text = lastMonthNumberOfUsers;
+    }];
+    
+    PFQuery *lastMonthSentQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
+    [lastMonthSentQuery whereKey:@"createdAt" greaterThanOrEqualTo:lastMonth];
+    [lastMonthSentQuery countObjectsInBackgroundWithBlock:^(int tagCount, NSError *error) {
+        if (!error) {
+            // The count request succeeded. Log the count
+        } else {
+            // The request failed
+        }
+        NSString *lastMonthTagsSent = [[NSString alloc]initWithFormat:@"%i", tagCount];
+        self.numberOfTagsSent.text = lastMonthTagsSent;
+    }];
+    
+    PFQuery *lastMonthReceivingUserQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
+    [lastMonthReceivingUserQuery whereKey:@"createdAt" greaterThanOrEqualTo:lastMonth];
+    lastMonthReceivingUserQuery.limit = 1000;
+    [lastMonthReceivingUserQuery findObjectsInBackgroundWithBlock:^(NSArray *receivingUsers, NSError *error) {
+        NSNumber *receivingUsersAmount = [NSNumber numberWithInt:0];
+        for (PFObject *obj in receivingUsers) {
+            receivingUsersAmount = [NSNumber numberWithInt:[receivingUsersAmount intValue] + [(NSArray *)[obj objectForKey:@"receivingUsers"] count]];
+        }
+        NSString *lastMonthTagsReceived = [[NSString alloc]initWithFormat:@"%@", receivingUsersAmount];
+        self.numberOfTagsRecieved.text = lastMonthTagsReceived;
+        
+    }];
+    
+    
+    
+}
+
+- (IBAction)showResultsFromAllTime:(id)sender {
+    
     PFQuery *userCountQuery = [PFUser query];
     [userCountQuery countObjectsInBackgroundWithBlock:^(int userCount, NSError *error) {
         if (!error) {
             // The count request succeeded. Log the count
-       //     NSLog(@"There are %d users", userCount);
         } else {
             // The request failed
         }
@@ -85,11 +279,9 @@
     
     //Number of Tags sent
     PFQuery *tagsSentQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
-    
     [tagsSentQuery countObjectsInBackgroundWithBlock:^(int tagCount, NSError *error) {
         if (!error) {
             // The count request succeeded. Log the count
-         //   NSLog(@"There have been %d tags sent", tagCount);
         } else {
             // The request failed
         }
@@ -97,9 +289,10 @@
         self.numberOfTagsSent.text = tagsSent;
     }];
     
-    //Number of Tag Recipients
+    //Number of Tags Received
     PFQuery *receivingUserQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
-    [receivingUserQuery whereKey:@"receivingUsers" greaterThan:@0];
+    //[receivingUserQuery whereKey:@"receivingUsers" greaterThan:@0];
+    receivingUserQuery.limit = 1000;
     [receivingUserQuery findObjectsInBackgroundWithBlock:^(NSArray *receivingUsers, NSError *error) {
         NSNumber *receivingUsersAmount = [NSNumber numberWithInt:0];
         for (PFObject *obj in receivingUsers) {
@@ -107,126 +300,49 @@
         }
         NSString *tagsReceived = [[NSString alloc]initWithFormat:@"%@", receivingUsersAmount];
         self.numberOfTagsRecieved.text = tagsReceived;
-      //  NSLog(@"There has been %@ tag recipients", receivingUsersAmount);
-        //NSLog(@"receivingusers %i", receivingUserQuery);
-
-    }];
-    
-//    //Top 10 users with most tags
-//    PFQuery *topTenQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
-//    //[topTenQuery whereKey:@"wins" greaterThan:@150];
-//    [topTenQuery orderByAscending:@"receivingUsers"];
-//    [topTenQuery countObjectsInBackgroundWithBlock:^(int tagCount, NSError *error) {
-//        if (!error) {
-//            // The count request succeeded. Log the count
-//            NSLog(@"Top 10 %d tags sent", tagCount);
-//        } else {
-//            // The request failed
-//        }
-//    }];
-    
-    //Number of Tag Recipients
-    
-//    [PFCloud callFunctionInBackground:@"NewMarcoPolo"
-//                       withParameters:@{@"array": @"receivingUsers"}
-//                                block:^(NSNumber *ratings, NSError *error) {
-//                                    if (!error) {
-//                                        // ratings is 4.5
-//                                    }
-//                                }];
-    
-    PFQuery *topTenQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
-    [topTenQuery includeKey:@"receivingUsers"]; // Force parse to include the user objects of receivers
-    [topTenQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
-            // The find succeeded.
-           // NSLog(@"Successfully retrieved %lu scores.", (unsigned long)objects.count);
-            // Do something with the found objects
-            for (PFObject *object in objects) {
-                // Write to log the email of every receiver
-                for (PFUser *receiver in object[@"receivingUsers"]) {
-                    [receiver fetchIfNeeded]; // fetches the object if it is still just a pointer (just a safety; it should be already included by the includeKey call earlier in the code
-                   // NSLog(@"Receiver: %@", receiver[@"email"]);
-                }
-            }
-        } else {
-            // Log details of the failure
-            NSLog(@"Error: %@ %@", error, [error userInfo]);
-        }
-    }];
-    
-    //Date
-    
-    NSTimeInterval secondsPerDay = 24 * 60 * 60;
-    
-    NSDate *tomorrow = [[NSDate alloc]
-                        initWithTimeIntervalSinceNow:secondsPerDay];
-    NSDate *yesterday = [[NSDate date] dateByAddingTimeInterval:-60*60*24];
-    NSDate *lastWeek = [[NSDate alloc]initWithTimeIntervalSinceNow:-secondsPerDay * 7];
-    
-    NSDate *lastMonth = [[NSDate alloc]initWithTimeIntervalSinceNow:-secondsPerDay * 30];
-
-
-
-    PFQuery *dateQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
-    [dateQuery whereKey:@"updatedAt" greaterThan:yesterday];
-    [dateQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
-            // The find succeeded.
-          // NSLog(@"Successfully retrieved %d scores.", objects.count);
-            // Do something with the found objects
-            for (PFObject *object in objects) {
-                NSLog(@"%@", object.createdAt);
-            }
-        } else {
-            // Log details of the failure
-            NSLog(@"Error: %@ %@", error, [error userInfo]);
-        }
         
-        NSLog(@"%@", dateQuery);
     }];
-
     
-
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+
+#pragma mark Picker Data Source Methods
+
+-(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    
+    return 1;
+    
 }
 
-//#pragma mark - UIPickerView DataSource
-//// returns the number of 'columns' to display.
-//- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-//{
-//    return 1;
-//}
-//
-//// returns the # of rows in each component..
-//- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-//{
-//    return [_dateArray count];
-//}
-//
-//#pragma mark - UIPickerView Delegate
-//- (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
-//{
-//    return 30.0;
-//}
-//
-//- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
-//{
-//    return [_dateArray objectAtIndex:row];
-//}
-//
-////If the user chooses from the pickerview, it calls this function;
-//- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-//{
-//    //Let's print in the console what the user had chosen;
-//    
-//    }
-//    
-//    NSLog(@"Chosen item: %@", [_dateArray objectAtIndex:row]);
-//}
+-(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    
+    return [_timeFrame count];
+    
+}
+
+#pragma mark Picker Delegate Methods
+
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    return _timeFrame[row];
+    
+}
+
+-(void) pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    switch (row) {
+        case 0:
+            [self showResultsFromYesterday:self];
+            break;
+        case 1:
+            [self showResultsFromLastWeek:self];
+            break;
+        case 2:
+            [self showResultsFromLastMonth:self];
+            break;
+        case 3:
+            [self showResultsFromAllTime:self];
+        default:
+            break;
+    }
+}
 @end

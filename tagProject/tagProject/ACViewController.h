@@ -8,12 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ACViewController : UIViewController <UIPickerViewDataSource,UIPickerViewDelegate>
+@interface ACViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate>
 
 @property (strong, nonatomic) IBOutlet UILabel *numberOfUsers;
 @property (strong, nonatomic) IBOutlet UILabel *numberOfTagsSent;
 @property (strong, nonatomic) IBOutlet UILabel *numberOfTagsRecieved;
+
+
+- (IBAction)showResultsFromYesterday:(id)sender;
+- (IBAction)showResultsFromLastWeek:(id)sender;
+- (IBAction)showResultsFromLastMonth:(id)sender;
+
 @property (strong, nonatomic) IBOutlet UIPickerView *datePicker;
-@property (strong, nonatomic) IBOutlet NSArray *dateArray;
 
 @end

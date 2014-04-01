@@ -36,6 +36,7 @@
     //Number of Tags Sent
     PFQuery *tagsSentQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
     
+    
     [tagsSentQuery countObjectsInBackgroundWithBlock:^(int tagCount, NSError *error) {
         if (!error) {
             // The count request succeeded. Log the count
@@ -50,6 +51,7 @@
     //Number of Tags Received
     PFQuery *receivingUserQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
     //[receivingUserQuery whereKey:@"receivingUsers" greaterThan:@0];
+    receivingUserQuery.limit = 1000;
     [receivingUserQuery findObjectsInBackgroundWithBlock:^(NSArray *receivingUsers, NSError *error) {
         NSNumber *receivingUsersAmount = [NSNumber numberWithInt:0];
         for (PFObject *obj in receivingUsers) {
@@ -63,9 +65,9 @@
     
     PFQuery *topTenQuery = [PFQuery queryWithClassName:@"NewMarcoPolo"];
     [topTenQuery orderByAscending:@"sendingUser"];
-    [topTenQuery whereKey:@"recievingUser" equalTo:<#(id)#>]
     topTenQuery.limit = 10;
-    [topTenQuery countObjectsInBackgroundWithBlock:^(int tagCount, NSError *error) {
+    [topTenQuery countObjectsInBackgroundWithBlock:^(int tagCount,
+                                                     NSError *error) {
         if (!error) {
             // The count request succeeded. Log the count
             NSLog(@"Top 10 %d tags sent", tagCount);
